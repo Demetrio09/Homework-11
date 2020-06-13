@@ -3,6 +3,7 @@
 
 const express = require("express");
 const path = require("path");
+const { get } = require("http");
 
 // Setup Express app
 // ==================================================
@@ -20,9 +21,9 @@ app.use(express.static("public"));
 // === Notes data ===
 // =================================================
 
-const note = require("./db/db.json");
+// const note = require("./db/db.json");
 
-// let notes = [];
+let note = [];
 
 // Routes
 // ==================================================
@@ -43,11 +44,36 @@ app.get("/api/notes", (req, res) => {
 
 // Creates a new note - takes in JSON input
 
-app.post("/api/notes", function(req, res) {
+app.post("/api/notes", function (req, res) {
+    // function Note(title, text, id) {
+    //     this.title = title,
+    //     this.text = text,
+    //     this.id = id
+    // };
+    // for (i = 0; i < note.length; i++) {
+    //     // Note.id = i;
+    //     let note = new Note(req.body, req.body, i);
+    //     console.log(note);
+    // };
+    note.id = 0;
     note.push(req.body);
     console.log(note);
 
     res.json(note);
+});
+
+// Delete a note
+
+app.delete("/api/notes/:id", function (req, res) {
+    note.findOneAndRemove({ _id: req.params.id }, (err, note) => {
+        if (err) {
+            res.send('error removing')
+        } else {
+            console.log(note);
+            res.status(204);
+        }
+    });
+    // res.send("Delete request to homepage.")
 });
 
 // Start the server to begin listening
