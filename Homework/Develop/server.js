@@ -17,10 +17,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
 
-// === NOtes data ===
+// === Notes data ===
 // =================================================
 
-let notes = [];
+const note = require("./db/db.json");
+
+// let notes = [];
 
 // Routes
 // ==================================================
@@ -36,13 +38,16 @@ app.get("/notes", (req, res) => {
 });
 
 app.get("/api/notes", (req, res) => {
-    return res.json(notes);
+    return res.json(note);
 });
 
 // Creates a new note - takes in JSON input
 
-app.post("api/notes", function(req, res) {
+app.post("/api/notes", function(req, res) {
+    note.push(req.body);
+    console.log(note);
 
+    res.json(note);
 });
 
 // Start the server to begin listening
