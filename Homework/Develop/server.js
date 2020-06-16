@@ -4,6 +4,7 @@
 const express = require("express");
 const path = require("path");
 const { get } = require("http");
+const fs = require("fs");
 
 // Setup Express app
 // ==================================================
@@ -21,9 +22,9 @@ app.use(express.static("public"));
 // === Notes data ===
 // =================================================
 
-// const note = require("./db/db.json");
+const note = require("./db/db.json");
 
-let note = [];
+
 
 // Routes
 // ==================================================
@@ -45,35 +46,54 @@ app.get("/api/notes", (req, res) => {
 // Creates a new note - takes in JSON input
 
 app.post("/api/notes", function (req, res) {
-    // function Note(title, text, id) {
-    //     this.title = title,
-    //     this.text = text,
-    //     this.id = id
-    // };
-    // for (i = 0; i < note.length; i++) {
-    //     // Note.id = i;
-    //     let note = new Note(req.body, req.body, i);
-    //     console.log(note);
-    // };
-    note.id = 0;
-    note.push(req.body);
-    console.log(note);
+  
+    var randomID = Math.floor(Math.random() * 1000)
 
-    res.json(note);
+  
+    var new_note = {
+        title: req.body.title,
+        text: req.body.text,
+        id: randomID
+    }
+
+    fs.readFile('./db/db.json', 'utf-8', function(err, data) {
+        if (err) throw err
+    
+        var arrayOfObjects = JSON.parse(data)
+        arrayOfObjects.push(new_note)
+    
+        fs.writeFile('./db/db.json', JSON.stringify(arrayOfObjects), 'utf-8', function(err) {
+            if (err) throw err
+            console.log('Done!')
+        
+        })
+    })
+    
 });
 
 // Delete a note
 
 app.delete("/api/notes/:id", function (req, res) {
-    note.findOneAndRemove({ _id: req.params.id }, (err, note) => {
-        if (err) {
-            res.send('error removing')
-        } else {
-            console.log(note);
-            res.status(204);
-        }
-    });
-    // res.send("Delete request to homepage.")
+
+    var noteID = req.params.id
+    fs.readFile('./db/db.json', 'utf-8', function(err, data) {
+        if (err) throw err
+    
+        var arrayOfObjects = JSON.parse(data)
+        
+
+        console.log(arrayOfObjects)
+
+        var filteredData = arrayOfObjects.filter(note => note.id != noteID);
+        console.log(filteredData)
+    
+        fs.writeFile('./db/db.json', JSON.stringify(filteredData), 'utf-8', function(err) {
+            if (err) throw err
+            console.log('Done!')
+             
+        })
+    })
+ 
 });
 
 // Start the server to begin listening
