@@ -46,54 +46,53 @@ app.get("/api/notes", (req, res) => {
 // Creates a new note - takes in JSON input
 
 app.post("/api/notes", function (req, res) {
-  
-    var randomID = Math.floor(Math.random() * 1000)
 
-  
-    var new_note = {
+    let randomID = Math.floor(Math.random() * 1000)
+
+    let new_note = {
         title: req.body.title,
         text: req.body.text,
         id: randomID
     }
 
-    fs.readFile('./db/db.json', 'utf-8', function(err, data) {
+    fs.readFile('./db/db.json', 'utf-8', function (err, data) {
         if (err) throw err
-    
-        var arrayOfObjects = JSON.parse(data)
+
+        let arrayOfObjects = JSON.parse(data)
         arrayOfObjects.push(new_note)
-    
-        fs.writeFile('./db/db.json', JSON.stringify(arrayOfObjects), 'utf-8', function(err) {
+
+        fs.writeFile('./db/db.json', JSON.stringify(arrayOfObjects), 'utf-8', function (err) {
             if (err) throw err
             console.log('Done!')
-        
+
         })
     })
-    
+
 });
 
 // Delete a note
 
 app.delete("/api/notes/:id", function (req, res) {
 
-    var noteID = req.params.id
-    fs.readFile('./db/db.json', 'utf-8', function(err, data) {
+    let noteID = req.params.id
+
+    fs.readFile('./db/db.json', 'utf-8', function (err, data) {
         if (err) throw err
-    
-        var arrayOfObjects = JSON.parse(data)
-        
+
+        let arrayOfObjects = JSON.parse(data)
 
         console.log(arrayOfObjects)
 
-        var filteredData = arrayOfObjects.filter(note => note.id != noteID);
+        let filteredData = arrayOfObjects.filter(note => note.id != noteID);
         console.log(filteredData)
-    
-        fs.writeFile('./db/db.json', JSON.stringify(filteredData), 'utf-8', function(err) {
+
+        fs.writeFile('./db/db.json', JSON.stringify(filteredData), 'utf-8', function (err) {
             if (err) throw err
             console.log('Done!')
-             
+
         })
     })
- 
+
 });
 
 // Start the server to begin listening
